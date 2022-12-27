@@ -1,0 +1,125 @@
+setwd("C:/Users/15517/Downloads")
+library(tidyverse)
+
+j <- 1
+p <- vector("list", 10000)
+input <- str_split(readLines("polymers.txt"), pattern = "")[[1]]
+repeat {
+  j <- j + 1
+
+  for(i in seq_along(input)){
+    
+    if(i == 1){
+      
+      next
+      
+    } 
+    else if(is.na(input[i]) | is.na(input[i-1])){
+      
+      next
+    }
+    
+      else if((tolower(input[i]) == input[i-1] && !identical(input[i], input[i-1])) | (toupper(input[i]) == input[i-1] && !identical(input[i], input[i-1]))) {
+        input <- input[-c(i,i-1)]
+      }
+  
+ 
+  }
+  
+  p[[j]] <- input
+  if(identical(p[[j]], p[[j-1]])) break 
+}
+  
+  
+
+#9386 
+
+
+#FASTER:
+
+matches <- c(map_chr(1:26, ~paste0(letters[.], toupper(letters[.]), collapse="")), map_chr(1:26, ~paste0(toupper(letters[.]), letters[.], collapse="")))
+
+
+remover <- function(x){
+  for(i in seq_along(matches)){
+    x <- str_remove_all(x, matches[i])
+    
+  }
+  return(x)
+}
+
+
+j <- 1
+p <- vector("list", 10000)
+input <- readLines("polymers.txt")
+repeat {
+  j <- j + 1
+  input <- remover(input)
+  p[[j]] <- input
+  if(identical(p[[j]], p[[j-1]])) break 
+  
+}
+nchar(input) #9386
+#part2:
+# build a function to run through all letters and see which terminates at the shortest length 
+
+terminate <- function(X){
+  set <- c(letters[X], toupper(letters[X]))
+  j <- 1
+  p <- vector("list", 10000)
+  input <- readLines("polymers.txt")
+  input <- str_remove_all(input, set[1])
+  input <- str_remove_all(input, set[2])
+  input <- str_split(input, pattern = "")[[1]]  
+  repeat {
+    j <- j + 1
+    for(i in seq_along(input)){
+      
+      if(i == 1){
+        
+        next
+        
+      } 
+      else if(is.na(input[i]) | is.na(input[i-1])){
+        
+        next
+      }
+      
+      else if((tolower(input[i]) == input[i-1] && !identical(input[i], input[i-1])) | (toupper(input[i]) == input[i-1] && !identical(input[i], input[i-1]))) {
+        input <- input[-c(i,i-1)]
+      }
+     
+    }
+    p[[j]] <- input
+    if(identical(p[[j]], p[[j-1]])) break 
+    
+    
+  }
+ return(length(p[[j]]))
+  
+}
+min(map_dbl(1:26, ~terminate(.))) #VERY SLOW
+
+#faster:
+terminatep2 <- function(X){
+  set <- c(letters[X], toupper(letters[X]))
+  input <- readLines("polymers.txt")
+  input <- str_remove_all(input, set[1])
+  input <- str_remove_all(input, set[2])
+  j <- 1
+  p <- vector("list", 10000)
+  repeat {
+    j <- j + 1
+    input <- remover(input)
+    p[[j]] <- input
+    if(identical(p[[j]], p[[j-1]])) break 
+    
+  }
+  return(nchar(input))
+}
+
+min(map_dbl(1:26, ~terminatep2(.))) # 4876
+
+
+
+
