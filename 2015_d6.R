@@ -43,4 +43,4 @@ for(i in seq_along(input)){
   
 }
 
-sum(lightsp2) #ANSWER ---------------------------------> 
+sum(lightsp2) #ANSWER ---------------------------------> 14,687,245
