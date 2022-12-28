@@ -1,0 +1,28 @@
+
+input <- readLines("deer.txt")
+speed <- map_dbl(1:length(input), ~as.double(str_extract_all(input, "\\d+")[[.]][1]))
+duration <- map_dbl(1:length(input), ~as.double(str_extract_all(input, "\\d+")[[.]][2]))
+rest <- map_dbl(1:length(input), ~as.double(str_extract_all(input, "\\d+")[[.]][3]))
+names <- map_chr(1:length(input), ~str_split(input, " ")[[.]][1])
+
+distance <- c()
+for(i in seq_along(names)){
+distance[i] <- floor(2503/(duration[i]+rest[i]))*(duration[i]*speed[i])+min(duration[i], (2503 %% (duration[i] + rest[i])))*speed[i]
+}
+cat(names[which.max(distance)], "Wins With", max(distance), "Points") #ANSWER -----------------------------> Cupid Wins With 2696 Points
+
+#PART 2:
+#INDEX THE DISTANCES WITH TIME
+total <- matrix(nrow=2503, ncol=9)
+for(i in seq_along(names)){
+  total[,i] <- cumsum(rep(append(rep(speed[i], duration[i]), rep(0, rest[i])), 50)[1:2503])
+}
+count <- c()
+for(i in 1:nrow(total)){
+  count[i] <- which.max(total[i,])
+  
+
+}
+
+cat(names[which.max(tabulate(count))], "Wins with",sort(tabulate(count),decreasing=T)[1], "Points") #ANSWER  ----------------------------> Rudolph Wins with 1084 Points
+
