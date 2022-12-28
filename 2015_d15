@@ -1,0 +1,27 @@
+#DAY 16:
+possibilities <- c()
+capacity <- c(3,-3,-1,0)
+du <- c(0,3,0,0)
+te <- c(-3,0,0,2)
+f <- c(0,0,4,-2)
+
+for(a in 1:100)
+  for(b in 1:100)
+    for(c in 1:100)
+      for(d in 1:100)
+if(a+b+c+d == 100)
+  possibilities <- append(possibilities, prod(max(0, a*capacity[1]+b*capacity[2]+c*capacity[3]+d*capacity[4]), max(0, a*du[1]+b*du[2]+c*du[3]+d*du[4]),max(0, a*te[1]+b*te[2]+c*te[3]+d*te[4]),max(0, a*f[1]+b*f[2]+c*f[3]+d*f[4])) )
+  
+cat("The total score of the highest-scoring cookie you can make is", max(possibilities)) #ANSWER ----------------------------> The total score of the highest-scoring cookie you can make is 222870
+
+#PART 2:
+calories <- c(2,9,1,8)
+possibilities <- c()
+for(a in 1:100)
+  for(b in 1:100)
+    for(c in 1:100)
+      for(d in 1:100)
+        if(a+b+c+d == 100 && (a*calories[1]+b*calories[2]+c*calories[3]+d*calories[4]) == 500 )
+          possibilities <- append(possibilities, prod(max(0, a*capacity[1]+b*capacity[2]+c*capacity[3]+d*capacity[4]), max(0, a*du[1]+b*du[2]+c*du[3]+d*du[4]),max(0, a*te[1]+b*te[2]+c*te[3]+d*te[4]),max(0, a*f[1]+b*f[2]+c*f[3]+d*f[4]))) 
+cat("The total score of the highest-scoring cookie you can make is with a 500 total calorie restraint is", max(possibilities)) #ANSWER ----------------------------> The total score of the highest-scoring cookie you can make is with a 500 total calorie restraint is 117936
+  
