@@ -1,0 +1,9 @@
+
+#DAY 25
+options(scipen = 999)
+pos <- sum(1:6059)+3083   # GENERALIZED FORM: sum(1:((row number - 1)+(column number - 1))) + column number 
+initial <- 20151125
+for(i in 2:pos){
+  initial[i] <- (initial[i-1]*252533) %% 33554393
+}
+tail(initial, 1) #ANSWER ---------------------->  2650453
