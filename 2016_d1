@@ -1,0 +1,121 @@
+#--- Day 1: No Time for a Taxicab ---
+
+input <- readLines("2016_d1.txt")
+lengths <- as.double(str_extract_all(input, "\\d+")[[1]])
+directions <-str_extract_all(input, "[L:R]")[[1]]
+direction <- "N"
+pos <- c(0,0)
+i <- 1
+storage <- paste0(pos[1],"-",pos[2])
+while(i <= length(directions)){
+  
+  if(tail(direction,1) =="N" && directions[i] == "R"){
+    pos[1] <- pos[1] + lengths[i]
+    direction <- c(direction,"W")
+    
+  }
+  else if(tail(direction,1)== "N" && directions[i] == "L"){
+    pos[1] <- pos[1] - lengths[i]
+    direction <- c(direction,"E")
+    
+  }
+  
+  else if(tail(direction,1) == "S" && directions[i] == "R"){
+    pos[1] <- pos[1] - lengths[i]
+    direction <- c(direction,"E")
+    
+  }
+  else if(tail(direction,1) == "S" && directions[i] == "L"){
+    pos[1] <- pos[1] + lengths[i]
+    direction <- c(direction,"W")
+    
+  }
+  
+  else if(tail(direction,1) =="W" && directions[i] == "R"){
+    pos[2] <- pos[2] - lengths[i]
+    direction <- c(direction,"S")
+    
+  }
+  else if(tail(direction,1) == "W" && directions[i] == "L"){
+    pos[2] <- pos[2] + lengths[i]
+    direction <- c(direction,"N")
+    
+  }
+  
+  else if(tail(direction,1) == "E" && directions[i] == "R"){
+    pos[2] <- pos[2] + lengths[i]
+    direction <- c(direction,"N")
+    
+  }
+  else if(tail(direction,1) == "E" && directions[i] == "L"){
+    pos[2] <- pos[2] - lengths[i]
+    direction <- c(direction, "S")
+    
+  }
+  i <- i + 1
+}
+sum(pos) # ANSWER -----------------------> 279
+
+
+#PART 2:
+
+direction <- "N"
+pos <- c(500,500)
+i <- 1
+city <- array(0, dim=c(1000,1000))
+city[500,500] <- 1
+while(length(which(city==2))==0){
+  if(tail(direction,1) =="N" && directions[i] == "R"){
+    city[(pos[1]+1):(pos[1]+lengths[i]), pos[2]] <- city[(pos[1]+1):(pos[1]+lengths[i]), pos[2]] + 1
+    pos[1] <- pos[1] + lengths[i]
+    direction <- c(direction,"W")
+    
+  }
+  else if(tail(direction,1)== "N" && directions[i] == "L"){
+    city[(pos[1]-1):(pos[1]-lengths[i]), pos[2]] <- city[(pos[1]-1):(pos[1]-lengths[i]), pos[2]] + 1 
+    print((pos[1]-1):(pos[1]-lengths[i]))
+    pos[1] <- pos[1] - lengths[i]
+    direction <- c(direction,"E")
+  }
+  
+  else if(tail(direction,1) == "S" && directions[i] == "R"){
+    city[(pos[1]-1):(pos[1]-lengths[i]), pos[2]] <- city[(pos[1]-1):(pos[1]-lengths[i]), pos[2]] + 1
+    pos[1] <- pos[1] - lengths[i]
+    direction <- c(direction,"E")
+    
+  }
+  else if(tail(direction,1) == "S" && directions[i] == "L"){
+    city[(pos[1]+1):(pos[1]+lengths[i]), pos[2]] <- city[(pos[1]+1):(pos[1]+lengths[i]), pos[2]] + 1   
+    pos[1] <- pos[1] + lengths[i]
+    direction <- c(direction,"W")
+    
+  }
+  
+  else if(tail(direction,1) =="W" && directions[i] == "L"){
+    city[pos[1],(pos[2]-1):(pos[2]-lengths[i])] <- city[pos[1],(pos[2]-1):(pos[2]-lengths[i])] + 1 
+    pos[2] <- pos[2] - lengths[i]
+    direction <- c(direction,"N")
+    
+  }
+  else if(tail(direction,1) == "W" && directions[i] == "R"){
+    city[pos[1],(pos[2]+1):(pos[2]+lengths[i])] <- city[pos[1],(pos[2]+1):(pos[2]+lengths[i])]+ 1 
+    pos[2] <- pos[2] + lengths[i]
+    direction <- c(direction,"S")
+    
+  }
+  
+  else if(tail(direction,1) == "E" && directions[i] == "L"){
+    city[pos[1],(pos[2]+1):(pos[2]+lengths[i])] <- city[pos[1],(pos[2]+1):(pos[2]+lengths[i])]+ 1 
+    pos[2] <- pos[2] + lengths[i]
+    direction <- c(direction,"S")
+    
+  }
+  else if(tail(direction,1) == "E" && directions[i] == "R"){
+    city[pos[1],(pos[2]-1):(pos[2]-lengths[i])] <- city[pos[1],(pos[2]-1):(pos[2]-lengths[i])] + 1 
+    pos[2] <- pos[2] - lengths[i]
+    direction <- c(direction, "N")
+    
+  }
+  i <- i + 1
+}
+abs(as.double(which(city==2, arr.ind=T))[1]-500) + abs(as.double(which(city==2, arr.ind=T))[2]-500) #ANSWER --------------> 163  
