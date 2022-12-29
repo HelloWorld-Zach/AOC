@@ -1,0 +1,39 @@
+#--- Day 8: Space Image Format ---
+library(openxlsx)
+input <- as.double(str_split(readLines("2019_d8.txt"), "")[[1]])
+pixels <- matrix(input, ncol = 100, nrow= 150, byrow=FALSE)
+
+count <- c()
+for(i in 1:ncol(pixels)){
+  count[i] <- length(which(pixels[,i]==0))
+  
+  
+}
+ a <- which.min(count)
+prod(length(which(pixels[,a]==1)),length(which(pixels[,a]==2))) #ANSWER ----------> 2480 
+
+
+#PART 2:
+colors <- c()
+for(i in 1:nrow(pixels)){
+  if(length(which(pixels[i,]==1))==0){
+    colors[i] <- "."
+    print(i)
+  }
+  else if(length(which(pixels[i,]==0))==0){
+    colors[i] <- "#"
+    print(i)
+  }
+  else {
+    colors[i] <-ifelse(min(which(pixels[i,]==1)) > min(which(pixels[i,]==0)), ".","#")  
+    
+  }
+}
+
+output <- matrix(colors, ncol=25, nrow=6, byrow=TRUE)
+
+
+ write.xlsx(output, file = "image.xlsx") #USE CONDITIONAL FORMATTING, READABLE EITHER WAY 
+ #ANSWER -----------> ZYBLH
+
+ 
