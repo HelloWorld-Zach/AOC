@@ -1,0 +1,43 @@
+# --- Day 3: No Matter How You Slice It ---
+  
+#PARTIALLY PARSED INPUT IN EXCEL 
+library(openxlsx)
+setwd("C:/Users/15517/Downloads")
+library(tidyverse)
+input <- tibble(read.xlsx(xlsxFile = "2018_d3.xlsx")) %>% separate(col = coord, into = c("xcoord", "ycoord"), sep=",")
+
+input$ycoord <- map_dbl(seq_len(nrow(input)), ~as.double(str_remove(input$ycoord, "\\:"))[[.]])
+input$xcoord <- as.double(input$xcoord)
+
+pos <- array(0, dim=c(1000,1000))
+attach(input)
+for(i in seq_len(nrow(input))){
+  
+  pos[(xcoord[i]):(xcoord[i]-1+x_len[i]), (ycoord[i]):(ycoord[i]-1+y_len[i])] <-  pos[(xcoord[i]):(xcoord[i]-1+x_len[i]), (ycoord[i]):(ycoord[i]-1+y_len[i])] + 1
+  
+  
+}
+
+
+length(which(pos>=2)) #ANSWER ------------> 109,143
+
+#PART 2:
+
+IDS <- array(0, dim=c(1000,1000))        
+
+for(i in seq_len(nrow(input))){
+  
+  IDS[(xcoord[i]):(xcoord[i]-1+x_len[i]), (ycoord[i]):(ycoord[i]-1+y_len[i])] <-  IDS[(xcoord[i]):(xcoord[i]-1+x_len[i]), (ycoord[i]):(ycoord[i]-1+y_len[i])] + i #CLAIM ID 
+  
+  
+}
+storage <- c()
+i <- 0
+while(sum(storage) == 0){
+  i <- i + 1
+  storage[i] <- all(IDS[(xcoord[i]):(xcoord[i]-1+x_len[i]), (ycoord[i]):(ycoord[i]-1+y_len[i])]==i)
+}
+
+
+i #ANSWER ------------------- > 506
+
