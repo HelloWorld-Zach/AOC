@@ -1,0 +1,48 @@
+#--- Day 12: Digital Plumber ---
+setwd("C:/Users/15517/Downloads")
+library(tidyverse)
+library(igraph)
+input <- tibble(readLines("2017_d12.txt"))  %>% rename(main = `readLines("2017_d12.txt")`) %>% separate(col = main, into=c("node", "connections"), sep="<->") %>%
+mutate(node = as.double(node))
+
+mat = array(0, dim=c(2500,2500))
+
+for(i in seq_len(nrow(input))){
+  
+  current <- as.double(str_split(input$connections[i], ",")[[1]])
+  
+  j <- 1
+  
+  repeat {
+    
+    if(j > length(current)) break 
+    
+    mat[(input$node[i]+1) , (current[j]+1)] <- 1 
+    
+    mat[(current[j]+1) , (input$node[i]+1)] <- 1 
+    
+    j <- j + 1
+    
+  }
+  
+}
+
+
+trees <- graph_from_adjacency_matrix(mat) #generate graph object (edges are row to col values equal to 1 in our array) matrix form is just easiest in this case
+
+                            #vcount is vertice count - here it is 2500 
+length(which(map_dbl(seq_len(vcount(trees)) , ~ length(shortest_paths(trees, from = 1, to = .)$vpath[[1]])) != 0)) #ANSWER -------------------> 283 
+
+#HOW MANY PATHS FROM 0 (1 IN THIS CASE BECAUSE SHIFTED UP (1 INDEXING IN R)) TO OTHER VERTICES EXIST?
+
+#PART 2: HOW MANY COMMUNICATING CLASSES ARE THERE?
+
+classes <- vector("list", length=max(input$node))
+
+for(i in seq_len(max(input$node))){       #VERY TIME CONSUMING
+  
+  classes[[i]] <- which(map_dbl(seq_len(vcount(trees)) , ~ length(shortest_paths(trees, from = i, to = .)$vpath[[1]])) != 0)
+
+}
+
+n_distinct(classes) #ANSWER --------------->  195 
