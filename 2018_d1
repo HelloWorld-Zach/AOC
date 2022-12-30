@@ -1,0 +1,23 @@
+# --- Day 1: Chronal Calibration ---
+
+library(tidyverse)
+setwd("C:/Users/15517/Downloads")
+
+input <- cumsum(as.double(readLines("2018_d1.txt"))) 
+
+tail(input,1) #ANSWER -----------> 427 
+
+
+#PART 2:
+
+input <- as.double(readLines("2018_d1.txt"))
+
+guess <- 138
+search <- cumsum(rep(input,guess))
+n_distinct(search) == length(search)      #USED MANUAL BINARY SEARCH TO OBTAIN FIRST VALUE TRUE S.T. THEN NEXT VALUE IS FALSE
+
+start = length(search) - length(input) + 1
+while(!(search[start] %in% search[1:(start-1)])){
+  start <- start + 1
+}
+search[start] #ANSWER ----------------------> 341 
