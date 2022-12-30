@@ -2,10 +2,10 @@
 setwd("C:/Users/15517/Downloads")
 library(tidyverse)
 library(igraph)
-input <- tibble(readLines("2017_d12.txt"))  %>% rename(main = `readLines("2017_d12.txt")`) %>% separate(col = main, into=c("node", "connections"), sep="<->") %>%
+input <- tibble(readLines("2017_d12.txt"))  %>% rename(main = `readLines("2017_d12.txt")`) %>% separate(col = main, into = c("node", "connections"), sep="<->") %>%
 mutate(node = as.double(node))
-
-mat = array(0, dim=c(max(input$node),max(input$node)))
+a = max(input$node)
+mat = array(0, dim = c(a+1,a+1))
 
 for(i in seq_len(nrow(input))){
   
@@ -31,17 +31,18 @@ for(i in seq_len(nrow(input))){
 trees <- graph_from_adjacency_matrix(mat) #generate graph object (edges are row to col values equal to 1 in our array) matrix form is just easiest in this case
 
                             
-length(which(map_dbl(seq_len(max(input$node)) , ~ length(shortest_paths(trees, from = 1, to = .)$vpath[[1]])) != 0)) #ANSWER -------------------> 283 
+length(which(map_dbl(seq_len(a) , ~ length(shortest_paths(trees, from = 1, to = .)$vpath[[1]])) != 0)) #ANSWER -------------------> 283 
 
 #HOW MANY PATHS FROM 0 (1 IN THIS CASE BECAUSE SHIFTED UP (1 INDEXING IN R)) TO OTHER VERTICES EXIST?
 
 #PART 2: HOW MANY COMMUNICATING CLASSES ARE THERE?
 
-classes <- vector("list", length=max(input$node))
+classes <- vector("list", length = a)
 
-for(i in seq_len(max(input$node))){       #VERY TIME CONSUMING
+for(i in seq_len(a)){       #VERY TIME CONSUMING
+
+  classes[[i]] <- which(map_dbl(seq_len(a), ~ length(shortest_paths(trees, from = i, to = .)$vpath[[1]])) != 0)
   
-  classes[[i]] <- which(map_dbl(seq_len(vcount(trees)) , ~ length(shortest_paths(trees, from = i, to = .)$vpath[[1]])) != 0)
-cat(100*i/max(input$node), "% Completed", "\n")}
+cat(100*i/a, "% Completed", "\n")}
 
 n_distinct(classes) #ANSWER --------------->  195 
