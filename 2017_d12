@@ -42,7 +42,6 @@ classes <- vector("list", length=max(input$node))
 for(i in seq_len(max(input$node))){       #VERY TIME CONSUMING
   
   classes[[i]] <- which(map_dbl(seq_len(vcount(trees)) , ~ length(shortest_paths(trees, from = i, to = .)$vpath[[1]])) != 0)
-  cat((i/max(input$node), "% completed")
-}
+cat(100*i/max(input$node), "% Completed", "\n")}
 
 n_distinct(classes) #ANSWER --------------->  195 
