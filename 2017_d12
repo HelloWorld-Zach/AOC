@@ -43,7 +43,7 @@ for(i in seq_len(a)){       #VERY TIME CONSUMING
 
   classes[[i]] <- which(map_dbl(seq_len(a), ~ length(shortest_paths(trees, from = i, to = .)$vpath[[1]])) != 0)
   
-cat(100*i/a, "% Completed", "\n")
+cat(100*i/a, "% Completed \n")
 
 }
 
