@@ -1,0 +1,9 @@
+#--- Day 1: Not Quite Lisp ---
+
+input <- case_when(str_split(readLines("2015_d1.txt"), "")[[1]] == ")" ~ -1, str_split(readLines("2015_d1.txt"), "")[[1]] == "(" ~ 1)
+
+sum(input) #ANSWER ----> 74
+
+#PART 2:
+
+min(which(cumsum(input) == -1)) #ANSWER ----- > 1795
