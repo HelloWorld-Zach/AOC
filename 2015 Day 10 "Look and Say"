@@ -1,0 +1,15 @@
+#--- Day 10: Elves Look, Elves Say ---
+
+initial <- "1113222113"
+
+elves <- function(x) return(str_flatten(paste0(rle(str_split(x, "")[[1]])$lengths, rle(str_split(x, "")[[1]])$values)))
+  
+for(i in seq_len(40)) initial <- elves(initial)
+
+nchar(initial) #252,594
+
+#PART 2:
+
+for(i in seq_len(10)) initial <- elves(initial)
+
+nchar(initial) #ANSWER 3,579,328
