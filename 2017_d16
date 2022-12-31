@@ -1,0 +1,85 @@
+# --- Day 16: Permutation Promenade ---
+
+puzzle <- str_split(readLines("2017_d16.txt"), ",")[[1]] #10,000 x "/" positions exchange places "S" IS SPIN makes x items move from front to end "p" swap actual item names 
+
+instructions <- substr(puzzle, 1,1)
+
+
+dance <- letters[1:16]
+first <- c()
+second <- c()
+pos1 <- c()
+pos2 <- c()
+for(i in 1:10000){
+  
+  if(instructions[i] == "s"){
+    dance <- c(dance[(16-as.double(str_extract(puzzle[i], "\\d+")[[1]])+1):16], dance[1:(16-as.double(str_extract(puzzle[i], "\\d+")[[1]]))])
+    print(i)
+  }
+  else if(instructions[i] == "x"){
+    pos1 <- as.double(str_extract_all(puzzle[i], "\\d+")[[1]][1])+1
+    pos2 <- as.double(str_extract_all(puzzle[i], "\\d+")[[1]][2])+1
+    first <- dance[as.double(str_extract_all(puzzle[i], "\\d+")[[1]][1])+1]
+    second <- dance[as.double(str_extract_all(puzzle[i], "\\d+")[[1]][2])+1]
+    dance[pos2] <- first
+    dance[pos1] <- second
+    print(i)
+  }
+  
+  else if(instructions[i] == "p"){
+    pos1 <- which(dance == substr(puzzle[i],2,2))
+    pos2 <- which(dance == substr(puzzle[i],4,4))
+    dance[pos1] <- substr(puzzle[i],4,4)
+    dance[pos2] <- substr(puzzle[i],2,2)
+    print(i)
+  }
+  
+}
+
+cat(paste0(dance, collapse="")) #ANSWER ---------------> dcmlhejnifpokgba 
+
+
+#PART 2:
+options(scipen = 999)
+dance <- letters[1:16]
+first <- c()
+second <- c()
+pos1 <- c()
+pos2 <- c()
+storage <- c(paste0(dance, collapse=""))
+round <- 1
+repeat{
+  if(round == 100) break 
+  for(i in 1:10000){
+    
+    if(instructions[i] == "s"){
+      dance <- c(dance[(16-as.double(str_extract(puzzle[i], "\\d+")[[1]])+1):16], dance[1:(16-as.double(str_extract(puzzle[i], "\\d+")[[1]]))])
+    }
+    else if(instructions[i] == "x"){
+      pos1 <- as.double(str_extract_all(puzzle[i], "\\d+")[[1]][1])+1
+      pos2 <- as.double(str_extract_all(puzzle[i], "\\d+")[[1]][2])+1
+      first <- dance[as.double(str_extract_all(puzzle[i], "\\d+")[[1]][1])+1]
+      second <- dance[as.double(str_extract_all(puzzle[i], "\\d+")[[1]][2])+1]
+      dance[pos2] <- first
+      dance[pos1] <- second
+    }
+    
+    else if(instructions[i] == "p"){
+      pos1 <- which(dance == substr(puzzle[i],2,2))
+      pos2 <- which(dance == substr(puzzle[i],4,4))
+      dance[pos1] <- substr(puzzle[i],4,4)
+      dance[pos2] <- substr(puzzle[i],2,2)
+    }
+    
+  } 
+  
+  round <- round + 1
+  storage <- c(storage, paste0(dance, collapse=""))
+  print(round)
+  
+}
+#ASCERTAIN THAT CYCLE LENGTH IS 24
+
+cycle <- storage[1:24]
+
+cycle[(1000000000 %% 24)+1] #ANSWER ---------> ifocbejpdnklamhg
