@@ -4,7 +4,7 @@ library(combinat)
 input <- as.integer(readLines("2015_d17.txt"))
 
 results <- vapply(X = 1:20, FUN.VALUE = numeric(1), FUN = function(x) length(which(colSums(combn(input, x)) == 150)))
-sum(storage)   #ANSWER ---------> 1304                                                                                                            
+sum(results)   #ANSWER ---------> 1304                                                                                                            
 
 #PART 2:
 
