@@ -1,0 +1,74 @@
+#--- Day 18: Like a GIF For Your Yard ---             https://en.wikipedia.org/wiki/Conway's_Game_of_Life
+
+input <- readLines("2015_d18.txt")
+
+space <- array(9, dim=c(102,102))
+for(i in seq_len(100)){
+  space[(i+1),2:101] <- case_when(str_split(input[i], "")[[1]] == "#" ~1, str_split(input[i], "")[[1]] == "." ~0)
+  
+}
+
+
+decision <- function(x,y){
+  current <- space[x,y]
+  neighbors <- as.vector(space[(x-1):(x+1),(y-1):(y+1)])[-5]
+  oncount <- length(which(neighbors == 1))
+  if((current == 1 & oncount %in% c(2,3)) | (current == 0 & oncount ==3))
+    return(1)
+  else 
+    return(0)
+}
+
+step <- 1 
+moves <- array(9, dim=c(102,102))
+while(step <= 100){
+  
+  for(i in 2:101)
+    for(j in 2:101)
+  moves[i,j] <- decision(i,j)
+  
+  space <- moves
+  
+  step <- step + 1
+  
+}
+
+length(which(space == 1)) #ANSWER -------------- > 814
+
+
+#PART 2:
+
+decisionp2 <- function(x,y){
+  current <- space[x,y]
+  neighbors <- as.vector(space[(x-1):(x+1),(y-1):(y+1)])[-5]
+  oncount <- length(which(neighbors == 1))
+  if((current == 1 & oncount %in% c(2,3)) | (current == 0 & oncount ==3) | (x == 101 & y == 101 )| (x == 2 & y == 101 )| (x == 101 & y == 2 )| (x == 2 & y == 2))
+    return(1)
+  else 
+    return(0)
+}
+
+space <- array(9, dim=c(102,102))
+for(i in seq_len(100)){
+  space[(i+1),2:101] <- case_when(str_split(input[i], "")[[1]] == "#" ~1, str_split(input[i], "")[[1]] == "." ~0)
+  
+}
+space[101,101] <- 1
+space[2,101] <- 1
+space[101,2] <- 1
+space[2,2] <- 1
+step <- 1 
+moves <- array(9, dim=c(102,102))
+while(step <= 100){
+  
+  for(i in 2:101)
+    for(j in 2:101)
+      moves[i,j] <- decisionp2(i,j)
+  
+  space <- moves
+  
+  step <- step + 1
+  
+}
+
+length(which(space == 1)) #ANSWER -------------- > 924
