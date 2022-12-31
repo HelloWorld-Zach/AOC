@@ -2,13 +2,10 @@
 
 library(combinat)
 input <- as.integer(readLines("2015_d17.txt"))
-storage <- c()
-for(i in seq_len(20)){
-storage <- c(storage, length(which(colSums(combn(input, i)) == 150)))
-}
 
-sum(storage) #ANSWER ---------> 1304
+results <- vapply(X = 1:20, FUN.VALUE = numeric(1), FUN = function(x) length(which(colSums(combn(input, x)) == 150)))
+sum(storage)   #ANSWER ---------> 1304                                                                                                            
 
 #PART 2:
 
-storage[min(which(storage != 0))] # ANSWER -------------> 18 
+results[min(which(results!= 0))]    # ANSWER -------------> 18 
