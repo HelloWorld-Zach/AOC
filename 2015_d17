@@ -1,0 +1,14 @@
+#--- Day 17: No Such Thing as Too Much ---
+
+library(combinat)
+input <- as.integer(readLines("2015_d17.txt"))
+storage <- c()
+for(i in seq_len(20)){
+storage <- c(storage, length(which(colSums(combn(input, i)) == 150)))
+}
+
+sum(storage) #ANSWER ---------> 1304
+
+#PART 2:
+
+storage[min(which(storage != 0))] # ANSWER -------------> 18 
