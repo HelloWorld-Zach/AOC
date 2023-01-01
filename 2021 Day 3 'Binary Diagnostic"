@@ -1,0 +1,59 @@
+#--- Day 3: Binary Diagnostic ---
+
+input <- readLines("2021_d3.txt")
+
+numbers <- array(0, dim=c(1000,12))
+for(i in seq_len(1000)){
+  
+  numbers[i, 1:12] <- as.integer(str_split(input[i], "")[[1]])
+  
+}
+
+mostcommon <- function(x) ifelse(colMeans(numbers)[x] > 0.5, 1,0)
+leastcommon <- function(x) ifelse(colMeans(numbers)[x] > 0.5, 0, 1)
+
+gamma <- as.integer(crossprod(map_dbl(seq_len(ncol(numbers)), ~mostcommon(.)), 2^(11:0)))
+epsilon <- as.integer(crossprod(map_dbl(seq_len(ncol(numbers)), ~leastcommon(.)), 2^(11:0)))
+
+prod(gamma, epsilon) #ANSWER ------ >  3429254
+#PART 2:
+numberscopy <- numbers
+
+start <- 1
+repeat{
+  if(start == 12) break
+  if(colMeans(numberscopy)[start] >= 0.5){
+    numberscopy <- numberscopy[which(numberscopy[,start] == 0),]
+  }
+  else if(colMeans(numberscopy)[start] < 0.5){
+    numberscopy <- numberscopy[which(numberscopy[,start] == 1),]
+  }  
+  
+  start <- start + 1  
+    
+    
+  
+}
+
+co2 <- as.double(crossprod(2^(11:0), numberscopy))
+
+numberscopy <- numbers
+start <- 1
+repeat{
+  if(start == 12) break
+  if(colMeans(numberscopy)[start] >= 0.5){
+    numberscopy <- numberscopy[which(numberscopy[,start] == 1),]
+  }
+  else if(colMeans(numberscopy)[start] < 0.5){
+    numberscopy <- numberscopy[which(numberscopy[,start] == 0),]
+  }  
+  
+  start <- start + 1  
+  
+  
+  
+}
+
+oxygen <- as.double(crossprod(2^(11:0), numberscopy))
+
+prod(oxygen, co2) #ANSWER -----> 5,410,338
