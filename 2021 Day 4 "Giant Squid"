@@ -1,0 +1,66 @@
+#--- Day 4: Giant Squid --- 
+
+input <- readLines("2021_d4.txt")
+input <- input[setdiff(1:601, c(1,which(input=="")))]
+numbers <- as.integer(str_split(input[1], ",")[[1]])
+mat <- matrix(0, nrow=500, ncol=5)
+for(i in 1:500){
+  mat[i, 1:5] <-  na.omit(as.double(str_split(input[i], " ")[[1]]))[1:5]
+  
+}
+boards = array(0, dim=c(5,5,100))
+boards[1:5,1:5,1] <- mat[1:5,1:5]
+for(i in 2:100){
+  boards[1:5,1:5, i] <- mat[(5*(1:100)[i-1]+1):(5*(1:100)[i]),1:5]
+}
+count = array(0, dim=c(5,5,100))
+
+
+number <- 1
+con <- c()
+repeat{
+  
+  up = which(boards == numbers[number], arr.ind=T)
+  if(nrow(up) != 0){
+  for(i in 1:nrow(up))
+   count[as.double(up[i,][1]),as.double(up[i,][2]),as.double(up[i,][3])] <- 1
+  }
+  
+  con <- vapply(1:100, FUN.VALUE = numeric(1), function(x) any(colSums(count[1:5,1:5,x]) == 5) | any(rowSums(count[1:5,1:5,x]) == 5))
+  if(sum(con) != 0) break 
+  number <- number + 1
+}
+
+
+prod(sum(boards[,,which(con==1)][which(count[,,which(con==1)] == 0)]), numbers[number]) #ANSWER --------------> 25,410
+
+#PART 2:
+
+#RESET EVERYTHING
+boards = array(0, dim=c(5,5,100))
+boards[1:5,1:5,1] <- mat[1:5,1:5]
+for(i in 2:100){
+  boards[1:5,1:5, i] <- mat[(5*(1:100)[i-1]+1):(5*(1:100)[i]),1:5]
+}
+count = array(0, dim=c(5,5,100))
+number <- 1
+con <- c()
+winners <- c()
+repeat{
+  
+  up = which(boards == numbers[number], arr.ind=T)
+  if(nrow(up) != 0){
+    for(i in 1:nrow(up))
+      count[as.double(up[i,][1]),as.double(up[i,][2]),as.double(up[i,][3])] <- 1
+  }
+  
+  con <- vapply(1:100, FUN.VALUE = numeric(1), function(x) any(colSums(count[1:5,1:5,x]) == 5) | any(rowSums(count[1:5,1:5,x]) == 5))
+  winners <- c(winners, which(con != 1))
+  if(sum(con) == 100) break 
+  number <- number + 1
+  print(number)
+}
+
+tail(winners,1) #BOARD 41 is the last winner
+
+prod(sum(boards[,,tail(winners,1)][which(count[,,tail(winners,1)] == 0)]), numbers[number]) #ANSWER --------------> 2,730 
