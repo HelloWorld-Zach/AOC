@@ -1,0 +1,57 @@
+#--- Day 16: Dragon Checksum ---
+
+library(tidyverse)
+library(tictoc)
+string <- "10111011111001111"
+
+repeat {
+  
+  if(nchar(string) >= 272) break 
+  
+  string <- str_c(str_c(string, "0"), str_flatten(rev(case_when(str_split(string, "")[[1]] == "0" ~ "1", str_split(string, "")[[1]] == "1" ~ "0"))))
+  print(string)
+  
+  
+}
+
+string <- str_split(string, "")[[1]][1:272]
+
+repeat {
+  string <- case_when(colSums(matrix(as.double(string), nrow=2)) %in% c(0,2) ~ 1, colSums(matrix(as.double(string), nrow=2)) == 1 ~ 0)
+  print(length(string))
+  if(length(string) %% 2 != 0 ) break 
+}
+
+cat("The checksum is", str_flatten(string))
+
+
+#PART 2:
+
+
+string <- "10111011111001111"
+
+tictoc::tic()
+repeat {
+  
+  if(nchar(string) >= 35651584) break 
+  
+  string <- str_c(str_c(string, "0"), str_flatten(rev(case_when(str_split(string, "")[[1]] == "0" ~ "1", str_split(string, "")[[1]] == "1" ~ "0"))))
+  print(nchar(string)*100/35651584)
+  
+  
+}
+
+string <- str_split(string, "")[[1]][1:35651584] 
+
+
+repeat {
+  string <- case_when(colSums(matrix(as.double(string), nrow=2)) %in% c(0,2) ~ 1, colSums(matrix(as.double(string), nrow=2)) == 1 ~ 0)
+  print(length(string))
+  if(length(string) %% 2 != 0 ) break 
+}
+
+cat("The checksum is", str_flatten(string)) #ANSWER ---------> The checksum is 01001101001000101
+
+tictoc::toc()
+
+#NOTE: fast solution given how long initial string is : 24.63 sec elapsed
