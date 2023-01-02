@@ -1,5 +1,5 @@
 #--- Day 10: The Stars Align --- 
-
+setwd("C:/Users/15517/Downloads")
 library(openxlsx)
 library(tidyverse)
 input <- readLines("2018_d10.txt")
@@ -10,40 +10,46 @@ x_vel <- map_dbl(1:350, ~as.double(str_extract_all(input, "-{0,1}\\d+")[[.]][3])
 y_vel <- map_dbl(1:350, ~as.double(str_extract_all(input, "-{0,1}\\d+")[[.]][4]))
 
 
-round <- 1
-storage <- c((abs(min(y_coord) - max(y_coord)) + abs(min(x_coord) - max(x_coord))))
+
+storage <- c(diff(range(x_coord)) + diff(range(y_coord)))
 coordinates <- list(c(x_coord,y_coord))
+round <- 1
+
 repeat{
+  
     x_coord <- x_coord + x_vel
     y_coord <- y_coord + y_vel
-storage <- c(storage, abs(min(y_coord) - max(y_coord)) + abs(min(x_coord) - max(x_coord)))
+    
+storage <- c(storage, (diff(range(x_coord)) + diff(range(y_coord))))
 round <- round + 1
 coordinates[[round]] <- c(x_coord,y_coord)
+
 if(storage[round] > storage[round-1]) break 
+
 }
 
-output = array(0, dim=c(250,250)) 
-for(i in 1:350){
-  output[coordinates[[length(coordinates)-1]][i+350],coordinates[[length(coordinates)-1]][i]] <- 1
-}
-summary(head(coordinates[[10942]], 350)) #X
-summary(tail(coordinates[[10942]], 350)) #Y
-output <- output[135:154, 162:231] #MIN TO MAX VALUES HERE 
+graph_x = head(coordinates[[length(storage)-1]], 350) - (min(head(coordinates[[length(storage)-1]], 350))-1)
+graph_y = tail(coordinates[[length(storage)-1]], 350) - (min(tail(coordinates[[length(storage)-1]], 350))-1)
+output = array(".", dim=c(max(graph_y), max(graph_x)))
 
-write.xlsx(output, "the_stars_align.xlsx") #EXCEL VERSIION -- USE CONDITIONAL FORMATTING IN EXCEL ---- HIGHLIGHT RULES IF "X" THEN ANY COLOR YOU LIKE 
+for(i in seq_along(graph_x)) {
+  output[graph_y[i], graph_x[i]] <- "X"
+}
 
 viewing <- c()
-for(i in 1:20){
-  viewing[i] <- str_flatten(output[i+134, 162:231])
+for(i in seq_len(max(graph_y))){
+  viewing[i] <- str_flatten(output[i, seq_len(max(graph_x))])
 }
 
-tibble(viewing) #NON-EXCEL VERSION 
+tibble(viewing)
+#IN EXCEL:
+write.xlsx(output, "the_stars_align.xlsx")
 
 
-#ANSWER --------------> "RRANZLAC" 
+#ANSWER --------------> "RRANZLAC" USE CONDITIONAL FORMATTING IN EXCEL ---- HIGHLIGHT RULES IF "X" THEN ANY COLOR YOU LIKE 
 
 
 #PART 2: HOW MANY SECONDS DID THIS TAKE? ESSENTIALLY JUST NUMBER OF ITERATIONS
 
 
-round - 2 #MINUS 2 BECAUSE THE MINIMUM IS AT THE 2ND TO LAST VALUE AND WE START AT 1 NOT 0 ------> 10942 
+round - 2 #MINUS 2 BECAUSE THE MINIMUM IS AT THE 2ND TO LAST VALUE AND WE START AT 1 NOT 0 ------> length(storage)-2 
