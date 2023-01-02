@@ -26,11 +26,21 @@ output = array(0, dim=c(250,250))
 for(i in 1:350){
   output[coordinates[[length(coordinates)-1]][i+350],coordinates[[length(coordinates)-1]][i]] <- 1
 }
+summary(head(coordinates[[10942]], 350)) #X
+summary(tail(coordinates[[10942]], 350)) #Y
+output <- output[135:154, 162:231] #MIN TO MAX VALUES HERE 
+
+write.xlsx(output, "the_stars_align.xlsx") #EXCEL VERSIION -- USE CONDITIONAL FORMATTING IN EXCEL ---- HIGHLIGHT RULES IF "X" THEN ANY COLOR YOU LIKE 
+
+viewing <- c()
+for(i in 1:20){
+  viewing[i] <- str_flatten(output[i+134, 162:231])
+}
+
+tibble(viewing) #NON-EXCEL VERSION 
 
 
-write.xlsx(output, "the_stars_align.xlsx")
-
-#ANSWER --------------> "RRANZLAC" USE CONDITIONAL FORMATTING IN EXCEL ---- HIGHLIGHT RULES IF 1 THEN ANY COLOR YOU LIKE 
+#ANSWER --------------> "RRANZLAC" 
 
 
 #PART 2: HOW MANY SECONDS DID THIS TAKE? ESSENTIALLY JUST NUMBER OF ITERATIONS
