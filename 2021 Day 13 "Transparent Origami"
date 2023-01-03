@@ -1,0 +1,65 @@
+# --- Day 13: Transparent Origami ---
+
+library(tidyverse)
+library(openxlsx)
+setwd("C:/Users/15517/Downloads")
+input <- readLines("2021_d13.txt")
+x_coords <- map_dbl(1:799, ~as.double(str_extract_all(input[.], "\\d+")[[1]][1])) + 1  #ASSUMES 0 INDEXING 
+y_coords <- map_dbl(1:799, ~as.double(str_extract_all(input[.], "\\d+")[[1]][2])) + 1 #ASSUMES 0 INDEXING 
+
+instructions <- str_remove_all(input[801:812], "fold along ") #removing "fold along " proves unnecessary 
+
+
+origami <- array(0, dim = c(895, 1311))
+
+for(i in seq_along(x_coords)){
+  
+  origami[y_coords[i], x_coords[i]] <- 1
+  
+}
+
+int <- array(0, dim = c(nrow(origami), (ncol(origami)*0.5 + 0.5)))
+subset <- origami[, (ncol(origami)*0.5 + 1.5):ncol(origami)]
+otherside <- origami[, 1:(ncol(origami)*0.5 + 0.5)]
+for(i in 1:(ncol(origami)*0.5 - 0.5)){
+  int[, i] <- subset[, (ncol(origami)*0.5+0.5)-i]
+}
+part1 <- otherside + int 
+
+length(which(part1 != 0))  #ANSWER ------------> 678
+
+
+#PART 2:
+
+for(i in seq_along(instructions)){
+  
+  if(substr(instructions[i],1,1) == "x"){
+    int <- array(0, dim = c(nrow(origami), (ncol(origami)*0.5 + 0.5)))
+    subset <- origami[, (ncol(origami)*0.5 + 1.5):ncol(origami)]
+    otherside <- origami[, 1:(ncol(origami)*0.5 + 0.5)]
+    for(i in 1:(ncol(origami)*0.5 - 0.5)){
+      int[, i] <- subset[, (ncol(origami)*0.5+0.5)-i]
+    }
+    
+    origami <- otherside + int 
+    
+  }
+  else if(substr(instructions[i],1,1) == "y"){
+
+    int <- array(0, dim = c((nrow(origami)*0.5 + 0.5), ncol(origami)))
+    subset <- origami[(nrow(origami)*0.5 + 1.5):nrow(origami),]
+    otherside <- origami[1:(nrow(origami)*0.5 + 0.5),]
+    for(i in 1:(nrow(origami)*0.5 - 0.5)){
+      int[i, ] <- subset[(nrow(origami)*0.5+0.5)-i, ]
+    }
+    
+    origami <- otherside + int 
+    
+  }
+  
+}
+
+
+write.xlsx(origami, "picture.xlsx") #USE CONDITIONAL FORMATTING RULE HIGHLIGHT ANYTHING GREATER THAN 0
+
+#ANSWER ------> ECFHLHZF
