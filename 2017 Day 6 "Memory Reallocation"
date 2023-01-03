@@ -1,0 +1,47 @@
+# --- Day 6: Memory Reallocation ---
+
+banks <- c(4,1,15,12,0,9,9,5,5,8,7,3,14,5,12,3)
+identicalness <- list(banks)
+cycle <- 1
+helper <- rep(1:16,10)
+
+repeat {
+  
+  distribution = max(banks)
+  start = which.max(banks) + 1
+  banks[which.max(banks)] <- 0 
+  for(i in helper[start:(start+distribution-1)]){
+    banks[i] <- banks[i] + 1
+  }
+  
+  
+  cycle <- cycle + 1
+  identicalness[[cycle]] <- banks
+  
+  if(n_distinct(identicalness) != length(identicalness)) break 
+  
+}
+
+cycle - 1 #ANSWER -------> 6,681 
+
+#PART 2:
+
+
+repeat {
+  
+  distribution = max(banks)
+  start = which.max(banks) + 1
+  banks[which.max(banks)] <- 0 
+  for(i in helper[start:(start+distribution-1)]){
+    banks[i] <- banks[i] + 1
+  }
+  
+  
+  cycle <- cycle + 1
+  identicalness[[cycle]] <- banks
+  
+  if(identical(identicalness[[cycle]], identicalness[[6682]])) break 
+  
+}
+
+cycle - 6682 #ANSWER -----------> 2,392
