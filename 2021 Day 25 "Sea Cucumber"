@@ -1,0 +1,57 @@
+# --- Day 25: Sea Cucumber ---
+
+input <- readLines("2021_d25.txt")
+
+sea <- array(0, dim =c(137,139))
+for(i in 1:137){
+  sea[i, ] <- str_split(input[i], "")[[1]]
+}
+
+east <- function(){
+  output <- sea
+  for(i in 1:137)
+    for(j in 1:138)
+      if(sea[i,j] == ">" & sea[i, j+1] == "."){
+        output[i, j+1] <- ">"
+        output[i,j] <- "."
+      }
+  for(i in 1:137){
+    if(sea[i, 139] == ">" & sea[i, 1] == "."){
+      output[i,1] <- ">"
+      output[i, 139] <- "."
+    }
+  }
+  return(output)
+}
+
+south <- function(){
+  output <- sea
+  for(i in 1:136)
+    for(j in 1:139)
+      if(sea[i,j] == "v" & sea[i+1, j] == "."){
+        output[i, j] <- "."
+        output[i+1,j] <- "v"
+      }
+  for(i in 1:139){
+    if(sea[137, i] == "v" & sea[1, i] == "."){
+      output[1,i] <- "v"
+      output[137,i] <- "."
+    }
+  }
+  return(output)
+}
+storage <- list(sea)
+round <- 1
+repeat {
+
+  sea <- east()
+  sea <- south()
+  
+  round <- round + 1
+  storage[[round]] <- sea
+  
+  if(identical(storage[[round-1]], storage[[round]])) break 
+}
+
+
+round -1 #ANSWER ---------> 426
