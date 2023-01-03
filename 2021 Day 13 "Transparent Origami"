@@ -2,6 +2,7 @@
 
 library(tidyverse)
 library(openxlsx)
+require(plot.matrix)
 setwd("C:/Users/15517/Downloads")
 input <- readLines("2021_d13.txt")
 x_coords <- map_dbl(1:799, ~as.double(str_extract_all(input[.], "\\d+")[[1]][1])) + 1  #ASSUMES 0 INDEXING 
@@ -58,8 +59,11 @@ for(i in seq_along(instructions)){
   }
   
 }
+ANSWER <- matrix(case_when(origami > 0 ~ 1, origami ==0 ~ 0), ncol=41, nrow = 7)
 
+plot(ANSWER, col = c("white","firebrick1")) #R VERSION 
 
-write.xlsx(origami, "picture.xlsx") #USE CONDITIONAL FORMATTING RULE HIGHLIGHT ANYTHING GREATER THAN 0
+#EXCEL VERSION 
+write.xlsx(ANSWER, "picture.xlsx") #USE CONDITIONAL FORMATTING RULE HIGHLIGHT 1
 
 #ANSWER ------> ECFHLHZF
