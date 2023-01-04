@@ -1,0 +1,33 @@
+# --- Day 8: Two-Factor Authentication ---
+
+library(tidyverse)
+require(emuR)
+require(plot.matrix)
+input <- readLines("2016_d8.txt")
+image <- array(0, dim = c(6,50))
+rowhelp <- rep(1:50, 10)
+colhelp <- rep(1:6, 100)
+
+for(i in seq_along(input)){
+  if(str_count(input[i], "rect") == 1){
+    image[1:str_extract_all(input[i], "\\d+")[[1]][2], 1:str_extract_all(input[i], "\\d+")[[1]][1]] <- 1
+  }
+  else if(str_count(input[i], "row") == 1){
+    shift <- rowhelp[as.integer(str_extract_all(input[i], "\\d+")[[1]][2])] 
+    row <- as.integer(str_extract_all(input[i], "\\d+")[[1]][1]) + 1
+    image[row, ] <- shift(image[row, ], shift)
+  }
+  else if(str_count(input[i], "column") == 1){
+    shift <- colhelp[as.integer(str_extract_all(input[i], "\\d+")[[1]][2])]
+    col <- as.integer(str_extract_all(input[i], "\\d+")[[1]][1]) + 1
+    image[, col] <- shift(image[, col], shift)
+  }
+  
+  
+}
+
+sum(image) #128
+
+#PART 2:
+
+plot(image, col = c("white", "cadetblue4")) #ANSWER ---- > EOARGPHYAO
