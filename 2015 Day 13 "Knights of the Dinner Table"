@@ -1,0 +1,112 @@
+# --- Day 13: Knights of the Dinner Table ---
+
+roundtable <- readLines("2015_d13.txt")
+
+fact(8) #40,320 configurations
+
+roundtable <- str_replace_all(roundtable, "Alice", "1")
+roundtable <- str_replace_all(roundtable, "Bob", "2")
+roundtable <- str_replace_all(roundtable, "Eric", "3")
+roundtable <- str_replace_all(roundtable, "Mallory", "4")
+roundtable <- str_replace_all(roundtable, "David", "5")
+roundtable <- str_replace_all(roundtable, "George", "6")
+roundtable <- str_replace_all(roundtable, "Frank", "7")
+roundtable <- str_replace_all(roundtable, "Carol", "8")
+roundtable <- str_remove_all(roundtable, " happiness units by sitting next to")
+roundtable <- str_remove_all(roundtable, "would ")
+weights <- c()
+nodes <- c()
+for(i in seq_along(roundtable)){
+  
+  if(str_count(roundtable[i], "gain") == 1){
+    weights[i] <- as.double(str_extract_all(roundtable[i], "\\d+")[[1]][2])
+    nodes[i] <- paste0(as.double(str_extract_all(roundtable[i], "\\d+")[[1]][1]), as.double(str_extract_all(roundtable[i], "\\d+")[[1]][3]))
+  }
+  else {
+    weights[i] <- -as.double(str_extract_all(roundtable[i], "\\d+")[[1]][2])
+    nodes[i] <- paste0(as.double(str_extract_all(roundtable[i], "\\d+")[[1]][1]), as.double(str_extract_all(roundtable[i], "\\d+")[[1]][3]))
+                                 
+  }
+}
+
+pattern = str_flatten(nodes, "|") 
+possible <- c()
+combinations = permn(1:8)
+for(i in seq_along(combinations)){
+  
+  possible[i] <- str_flatten(c(combinations[[i]], combinations[[i]][1]))
+  
+}
+
+splitter <- function(x){
+  part1 <- str_split(x, "")[[1]]
+  part2 <- rev(str_split(x, "")[[1]])
+ stor1 <- c()
+ stor2 <- c()
+ for(i in 1:7){
+   stor1[i] <- paste0(part1[i],  part1[i+1])
+ }
+ for(i in 1:7){
+   stor2[i] <- paste0(part2[i],  part2[i+1])
+ }
+ 
+ return(c(stor1, paste0(part1[8], part1[9]), stor2, paste0(part2[8], part2[9])))
+}
+
+
+value <- function(x){
+  input <- splitter(possible[x])
+  output <- c()
+  for(i in 1:16){
+    output[i] <- weights[which(nodes == input[i])]
+  }
+  return(sum(output))
+}
+
+max(map_dbl(seq_len(fact(8)), ~ value(.)))  #618 --- messy not very elegant solution 
+
+#PART 2: 
+#just add a few more nodes and corresponding weights and slightly alter the functions used in part 1, iterate over 9! possibilities this time 
+
+combinations = permn(0:8)
+
+for(i in 1:8){
+  nodes <- c(nodes, paste0(0, i))
+  nodes <- c(nodes, paste0(i, 0))     
+}
+
+weights <- c(weights, rep(0,16))
+
+possible <- c()
+for(i in seq_along(combinations)){
+  
+  possible[i] <- str_flatten(c(combinations[[i]], combinations[[i]][1]))
+  
+}
+
+splitter <- function(x){
+  part1 <- str_split(x, "")[[1]]
+  part2 <- rev(str_split(x, "")[[1]])
+  stor1 <- c()
+  stor2 <- c()
+  for(i in 1:8){
+    stor1[i] <- paste0(part1[i],  part1[i+1])
+  }
+  for(i in 1:8){
+    stor2[i] <- paste0(part2[i],  part2[i+1])
+  }
+  
+  return(c(stor1, paste0(part1[9], part1[10]), stor2, paste0(part2[9], part2[10])))
+}
+
+
+value <- function(x){
+  input <- splitter(possible[x])
+  output <- c()
+  for(i in 1:18){
+    output[i] <- weights[which(nodes == input[i])]
+  }
+  return(sum(output))
+}
+
+max(map_dbl(seq_len(fact(9)), ~ value(.))) #601 
