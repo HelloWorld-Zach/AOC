@@ -40,8 +40,9 @@ repeat {
 }
  counter <- counter + 1
  print(counter)
+ if(length(remaining) == 1) break 
   remaining <- remaining[which(!(remaining %in% cache[[round]]))]
-  if(length(remaining) == 0) break 
+  
 }
 
 counter #ANSWER -----------> 314
