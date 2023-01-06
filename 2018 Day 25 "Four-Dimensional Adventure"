@@ -1,0 +1,47 @@
+# --- Day 25: Four-Dimensional Adventure ---
+
+#problem is essentially asking us to find number of disjoint sets based on distance criteria a point (in space-time) is enclosed in a set if it is within 3 manhattan 
+distance in relation to any other point currently in the set 
+
+library(tidyverse)
+setwd("C:/Users/15517/Downloads")
+input <- readLines("2018_d25.txt")
+
+x <- map_dbl(seq_along(input), ~ as.integer(str_extract_all(input, "-{0,1}\\d+")[[.]][1]))
+y <- map_dbl(seq_along(input), ~ as.integer(str_extract_all(input, "-{0,1}\\d+")[[.]][2]))
+z <- map_dbl(seq_along(input), ~ as.integer(str_extract_all(input, "-{0,1}\\d+")[[.]][3]))
+t <- map_dbl(seq_along(input), ~ as.integer(str_extract_all(input, "-{0,1}\\d+")[[.]][4]))
+
+
+distance <- function(x1,x2,y1,y2,z1,z2,t1,t2) return(ifelse(abs(x1-x2) + abs(y1-y2) + abs(z1- z2) + abs(t1 - t2) <= 3, 1, 0))
+
+connections <- function(s){
+  distances <- c()       
+  for(i in remaining){
+    distances[i] <- distance(x[s],x[i],y[s],y[i],z[s],z[i], t[s],t[i])
+  }
+  return(which(distances != 0))
+}
+
+remaining <- seq_along(input)
+counter <- 0
+repeat{
+ start_node = sample(remaining, 1) 
+ cache <- vector("list", 500)
+ cache[[1]] <- connections(start_node)
+ round <- 1
+repeat {
+ for(i in seq_along(cache[[round]])){
+ cache[[round+1]] <- c(cache[[round+1]], connections(cache[[round]][i]))
+ }
+  round <- round + 1
+  cache[[round]] <- unique(cache[[round]])
+  if(identical(sort(cache[[round]]),sort(cache[[round-1]]))) break 
+}
+ counter <- counter + 1
+ print(counter)
+  remaining <- remaining[which(!(remaining %in% cache[[round]]))]
+  if(length(remaining) == 0) break 
+}
+
+counter #ANSWER -----------> 314
