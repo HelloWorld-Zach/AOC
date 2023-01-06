@@ -24,25 +24,39 @@ connections <- function(s){
 }
 
 remaining <- seq_along(input)
+lengths <- c()
 counter <- 0
+start <- Sys.time()
 repeat{
  start_node = sample(remaining, 1) 
- cache <- vector("list", 500)
+ cache <- vector("list", 1500)
  cache[[1]] <- connections(start_node)
  round <- 1
 repeat {
- for(i in seq_along(cache[[round]])){
- cache[[round+1]] <- c(cache[[round+1]], connections(cache[[round]][i]))
- }
+  if(round == 1){
+    cache[[round+1]] <- cache[[round]]
+    for(i in seq_along(cache[[round]])){
+      cache[[round+1]] <- c(cache[[round+1]], connections(cache[[round]][i]))
+    } 
+  }
+  else {
+    cache[[round+1]] <- cache[[round]]
+  for(i in seq_along(setdiff(cache[[round]], cache[[round-1]]))){
+    cache[[round+1]] <- c(cache[[round+1]], connections(setdiff(cache[[round]], cache[[round-1]])[i]))
+  }
+  }
+
   round <- round + 1
   cache[[round]] <- unique(cache[[round]])
   if(identical(sort(cache[[round]]),sort(cache[[round-1]]))) break 
 }
  counter <- counter + 1
- print(counter)
- if(length(remaining) == 1) break 
+ print(Sys.time()-start)
+ if(length(remaining) == 1) break
   remaining <- remaining[which(!(remaining %in% cache[[round]]))]
-  
+ lengths <- c(lengths, length(remaining))
+   
 }
 
 counter #ANSWER -----------> 314
+
