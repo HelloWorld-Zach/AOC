@@ -1,0 +1,13 @@
+#--- Day 24: It Hangs in the Balance ---
+library(combinat)
+input <- as.integer(readLines("2015_d24.txt"))
+
+quantump1 = min(map_dbl(1:248, ~prod(combn(input, 6)[, which(colSums(combn(input, 6)) == 512)][,(.)]))) #10723906903 
+
+#part 2:
+quantump2 = min(map_dbl(1:18, ~prod(combn(input, 4)[, which(colSums(combn(input, 4)) == 384)][,(.)]))) #74850409
+
+
+
+
+#GOT LUCKY HERE HAVING THE MINIMUM BE THE ANSWER FOR EACH PART 
