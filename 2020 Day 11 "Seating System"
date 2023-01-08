@@ -1,0 +1,115 @@
+# --- Day 11: Seating System ---
+setwd("C:/Users/15517/Downloads")
+library(tidyverse)
+
+input <- readLines("2020_d11.txt") #93 col 90 row 
+space <- array(9, dim=c(92,95))
+for(i in seq_len(91)){
+  space[(i+1),2:94] <- case_when(str_split(input[i], "")[[1]] == "L" ~1, str_split(input[i], "")[[1]] == "." ~0)
+  
+}
+#0 IS FLOOR
+#1 IS EMPTY
+#2 IS TAKEN
+change <- function(x,y){
+  current <- space[x,y]
+  set <- as.vector(space[(x-1):(x+1),(y-1):(y+1)])[-5]
+  empty <- length(which(set==1))
+  taken <- length(which(set==2))
+  
+  if(current == 1 && taken == 0){
+    return(2)
+  }
+
+  else if(current == 2 && taken >= 4){
+    return(1)
+  }
+  else {
+    return(current)
+  }
+  
+  
+}
+
+moves <-  array(9, dim=c(92,95))
+round <- 1
+storage <- list(space)
+repeat{
+  
+  for(i in 2:91)
+    for(j in 2:94)
+      moves[i,j] <- change(i,j) 
+  
+  space <- moves
+  round <- round + 1 
+  storage[[round]] <- space
+  
+  if(identical(storage[[round-1]], storage[[round]])) break 
+}
+
+length(which(moves==2)) #ANSWER -------------> 2,194
+
+
+#PART 2: MORE COMPLEX CHANGE FUNCTION 
+
+changep2 <- function(x,y){ 
+  current <- space[x,y]
+  singleformat <- x + (y-1)*92
+  ndiag <- which(row(space)- col(space) == (row(space)- col(space))[singleformat])
+  rdiag <- which(row(space)+ col(space) == (row(space)+ col(space))[singleformat])
+  nlen <- length(ndiag)
+  rlen <- length(rdiag)
+  nbound <-  which(which(row(space)- col(space) == (row(space)- col(space))[singleformat]) == singleformat)
+  rbound <-  which(which(row(space)+ col(space) == (row(space)+ col(space))[singleformat]) == singleformat)
+  down  <- space[(x+1):92,y][min(which(space[(x+1):92,y] != 0))]
+  up <- space[(x-1):1,y][min(which(space[(x-1):1,y] != 0))]
+  right <- space[x,(y+1):95][min(which(space[x,(y+1):95] != 0))]
+  left  <- space[x,(y-1):1][min(which(space[x,(y-1):1] != 0))] 
+  urdv <- space[ndiag][(nbound-1):1][min(which(space[ndiag][(nbound-1):1] != 0))]
+  uldv <- space[ndiag][(nbound+1):nlen][min(which(space[ndiag][(nbound+1):nlen] != 0))]
+  lldv <-  space[rdiag][(rbound+1):rlen][min(which(space[rdiag][(rbound+1):rlen] != 0))]
+  lrdv <- space[rdiag][(rbound-1):1][min(which(space[rdiag][(rbound-1):1] != 0))]
+  
+  set <- c(left,right,down,up,uldv,urdv,lldv,lrdv)
+  empty <- length(which(set==1))
+  taken <- length(which(set==2))
+  
+  if(current == 1 && taken == 0){
+    return(2)
+  }
+  
+  else if(current == 2 && taken >= 5){
+    return(1)
+  }
+  else {
+    return(current)
+  }
+  
+  
+}
+
+space <- array(9, dim=c(92,95))
+for(i in seq_len(91)){
+  space[(i+1),2:94] <- case_when(str_split(input[i], "")[[1]] == "L" ~1, str_split(input[i], "")[[1]] == "." ~0)
+  
+}
+
+moves <-  array(9, dim=c(92,95))
+round <- 1
+storage <- list(space)
+repeat{
+  
+  for(i in 2:91)
+    for(j in 2:94)
+      # print(paste0(i, "_", j))
+      moves[i,j] <- changep2(i,j) 
+  
+  space <- moves
+  round <- round + 1 
+  print(round)
+  storage[[round]] <- space
+  
+  if(identical(storage[[round-1]], storage[[round]])) break 
+}
+
+length(which(moves==2)) #ANSWER -----------> 1,944   kinda slow 
