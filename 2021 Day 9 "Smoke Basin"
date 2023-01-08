@@ -1,0 +1,70 @@
+#--- Day 9: Smoke Basin ---
+
+setwd("C:/Users/15517/Downloads")
+library(tidyverse)
+input <- readLines("2021_d9.txt")
+
+smart <- array(10, dim=c(102,102))
+
+for(i in 1:100){
+  
+  smart[i+1, 2:101 ] <- as.integer(str_split(input[i], "")[[1]])
+}
+
+lowpointfinder <- function(x,y){
+ current <- smart[x,y] 
+ up <- smart[x-1, y] 
+ down <- smart[x+1, y] 
+ left <- smart[x, y-1]
+ right <- smart[x, y+1]
+ if(up > current & down > current & left > current & right > current)
+   return(1+current)
+ else
+   return(0)
+ }
+counter <- 0
+for(i in 2:101)
+  for(j in 2:101)
+    counter <- counter + lowpointfinder(i,j)
+
+counter #ANSWER ---------> 518 
+
+library(openxlsx)
+
+#PART 2: [DEPTH FIRST SEARCH ]
+graph = array(case_when(smart[1:102,1:102] %in% c(9,10) ~ 1, smart[1:102,1:102] %in% 0:8 ~ 0), dim=c(102,102))
+
+scan_neighbors <- function(x){
+  output <- c()
+  neighbors <- c(x, x-1, x+1, x-102, x+102)
+  # print(neighbors)
+  for(i in seq_along(neighbors)){
+    if(graph[neighbors[i]] == 0)
+      output <- c(output, neighbors[i])
+  }
+  return(output)
+}
+basinsizes <- c()
+within <- which(graph == 0)
+repeat{
+  
+  connected_nodes <- vector("list", 500)
+  basin <- sample(within, 1)
+  connected_nodes[[1]] <- scan_neighbors(basin)
+  round <- 1
+  repeat{
+    for(i in seq_along(connected_nodes[[round]])){
+      connected_nodes[[round+1]] <- c(connected_nodes[[round+1]], scan_neighbors(connected_nodes[[round]][i]))
+    }
+    round <- round + 1
+    connected_nodes[[round]] <- unique(connected_nodes[[round]])
+    if(identical(sort(connected_nodes[[round]]), sort(connected_nodes[[round-1]]))) break 
+  }
+  
+  within <- setdiff(within, connected_nodes[[round]])
+  basinsizes <- c(basinsizes, length(connected_nodes[[round]]))
+  # print(length(within))
+  if(length(within) == 0) break 
+}
+
+prod(sort(basinsizes, T)[1:3]) #ANSWER ----------> 949,905
