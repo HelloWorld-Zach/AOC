@@ -1,0 +1,40 @@
+# --- Day 13: A Maze of Twisty Little Cubicles ---
+
+library(R.utils)
+library(plot.matrix)
+walloropen <- function(x,y) ifelse(as.vector(table(str_split(intToBin((x*x + 3*x + 2*x*y + y + y*y) + 1352), "")[[1]]))[2] %% 2 == 0, 0,1)
+maze <- array(0, dim = c(100,100))  
+for(i in 1:100)
+  for(j in 1:100)
+    maze[i,j] <- walloropen(j-1,i-1)
+
+costs <- array(Inf, dim = c(100,100))
+unvisited = array(1, dim = c(100,100))
+current <- 102
+costs[102] <- 0
+repeat{
+  current <- which(costs == min(costs[which(unvisited==1)]) & unvisited==1)[1] #priority queue 
+  down <- ifelse(current %% 100 == 0, 0, ifelse(maze[current+1] == 1, 0 , current + 1))
+  left <- ifelse(current %in% (1:100), 0, ifelse(maze[current - 100] == 1, 0, current - 100))
+  right <- ifelse(current %in% (9901:10000), 0, ifelse(maze[current + 100] == 1, 0, current + 100)) 
+  up <- ifelse(current %in% seq(from =1, by = 100, to = 9901), 0, ifelse(maze[current-1] == 1, 0 , current - 1))
+  connected_nodes <- c(down, up, right, left)
+  for(i in 1:length(which(connected_nodes != 0))){
+    j <- connected_nodes[which(connected_nodes != 0)][i]
+    costs[j] <- min(costs[j] , costs[current] + 1)
+  }
+  unvisited[current] <- 0  
+  print(current)
+   #if(any(costs[which(costs != Inf)] > 50)) break   #node we are trying to reach  
+}
+
+costs[40,32] #ANSWER
+
+
+#PART 2:
+
+
+sum(as.vector(table(costs))[1:51]) #ANSWER
+ 
+library(openxlsx)
+write.xlsx(maze, file= "maze.xlsx")
