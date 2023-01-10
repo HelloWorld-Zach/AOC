@@ -22,7 +22,7 @@ repeat{
   else if((n_distinct(cumsum(rep(input,midpoint))) == length(cumsum(rep(input,midpoint)))) == (n_distinct(cumsum(rep(input,lower))) == length(cumsum(rep(input,lower)))))
     lower = midpoint
 }
-
+search = cumsum(rep(input, upper))
 start = length(search) - length(input) + 1
 while(!(search[start] %in% search[1:(start-1)])){
   start <- start + 1
