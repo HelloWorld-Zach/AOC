@@ -1,0 +1,75 @@
+# --- Day 11: Dumbo Octopus ---
+
+input <- readLines("dumbo.txt")
+grid <- array(0, dim = c(10,10))
+for(i in 1:10){
+  grid[i, ] <- as.integer(str_split(input[i], "")[[1]])
+}
+
+
+
+neighbors <- function(x){
+  left <- ifelse(x %in% 1:10, 0, x - 10)
+  right <- ifelse(x %in% 91:100, 0, x + 10)
+  up <- ifelse(x %in% seq(from = 1, to =91, by =10), 0, x - 1)
+  down <- ifelse(x %% 10 == 0, 0, x + 1)
+  diag1 <- ifelse(x %in% c(1:10, seq(from = 11, by= 10, to = 91)), 0, x - 11)
+  diag2 <- ifelse(x %in%  c(92:100, seq(from = 1, by= 10, to = 91)), 0, x + 9)
+  diag3 <- ifelse(x %in%  c(1:10, seq(from = 10, by= 10, to = 100)), 0, x - 9)
+  diag4 <- ifelse(x %in%  c(91:99, seq(from = 10, by= 10, to = 100)), 0, x + 11)
+  storage  = c(right,left,up,down,diag1,diag2,diag3,diag4)
+  return(storage[storage != 0 ])
+ 
+}
+
+simulator <- function(){
+  flash <- c()
+  seen <- c()
+  if(length(which(grid == 9)) == 0){
+    return(list(grid+1, 0))
+  } else{
+    grid <- grid + 1
+    seen <- which(grid > 9)
+    flash <- which(grid > 9)
+  repeat {
+    neb <- c()
+  for(i in seq_along(flash)){
+    neb <- c(neb, neighbors(flash[i]))
+  }
+  for(i in seq_along(neb)){
+    grid[neb[i]] <-  grid[neb[i]] + 1
+  }
+  
+    flash <- setdiff(which(grid > 9), seen)
+    seen <- unique(c(seen, flash))
+  
+  if(length(flash) == 0) break 
+  } 
+  
+  return(list(array(case_when(grid > 9  ~ 0, grid %in% 0:9 ~ grid), dim = c(10,10)), length(seen)))
+  }
+}
+round <- 1
+flashcount <- 0
+repeat{
+  
+  if(round == 101) break 
+  flashcount <- flashcount + simulator()[[2]]
+  grid <- simulator()[[1]]
+  round <- round + 1
+}
+
+flashcount #ANSWER 
+
+
+#PART 2:
+round <- 1
+repeat{
+
+  if(simulator()[[2]] == 100) break 
+  grid <- simulator()[[1]]
+  round <- round + 1
+  print(round)
+}
+
+round #ANSWER 
