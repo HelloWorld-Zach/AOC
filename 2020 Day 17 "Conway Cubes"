@@ -1,0 +1,80 @@
+# - --- Day 17: Conway Cubes ---
+
+input <- readLines("2020_d17.txt")
+sample <- array(0, dim =c(8,8))
+for(i in 1:8){
+  sample[i,] <- case_when(str_split(input[i], "")[[1]] == "#" ~ 1, str_split(input[i], "")[[1]] == "." ~ 0)
+}
+
+decision <- function(x,y,z){
+  current = three_D[x,y,z]
+  neighbors <- as.vector(three_D[(x-1):(x+1), (y-1):(y+1), (z-1):(z+1)])[-14]
+  inactivecount = length(which(neighbors == 0))
+  activecount  = length(which(neighbors == 1))
+  if(current == 1 & !(activecount %in% c(2,3))){
+   return(0) 
+  }
+  else if (current == 0 & activecount == 3){
+    return(1)
+  }
+  else {
+    return(current)
+  }
+}
+three_D <- array(0, dim = c(26,26,25))
+three_D[10:17, 10:17,13] <- sample
+
+
+round <- 1
+moves <- array(0, dim =c(26,26,25))
+while(round <= 6){
+for(i in 2:25)
+  for(j in 2:25)
+    for(k in 2:24)
+  moves[i,j,k] <- decision(i,j,k)
+
+  three_D <- moves
+ 
+round <- round + 1 
+}
+
+sum(moves) #ANSWER  
+
+
+#PART 2:
+
+four_D <- array(0, dim = c(26,26,25,25))
+four_D[10:17, 10:17,13, 13] <- sample
+
+
+decisionp2 <- function(x,y,z,w){
+  current = four_D[x,y,z,w]
+  neighbors <- as.vector(four_D[(x-1):(x+1), (y-1):(y+1), (z-1):(z+1), (w-1):(w+1)])[-41]
+  inactivecount = length(which(neighbors == 0))
+  activecount  = length(which(neighbors == 1))
+  if(current == 1 & !(activecount %in% c(2,3))){
+    return(0) 
+  }
+  else if (current == 0 & activecount == 3){
+    return(1)
+  }
+  else {
+    return(current)
+  }
+}
+
+round <- 1
+moves <- array(0, dim =c(26,26,25,25))
+while(round <= 6){
+  for(i in 2:25)
+    for(j in 2:25)
+      for(k in 2:24)
+        for(l in 2:24)
+        moves[i,j,k,l] <- decisionp2(i,j,k,l)
+  
+  four_D <- moves
+  
+  round <- round + 1 
+}
+
+sum(moves) #ANSWER
