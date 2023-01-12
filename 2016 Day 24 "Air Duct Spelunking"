@@ -1,0 +1,78 @@
+# --- Day 24: Air Duct Spelunking ---
+
+input <- readLines("2016_d24.txt")
+grid <- array(0, dim = c(37,179))
+for(i in 1:37){
+  grid[i, ] <- str_split(input[i], "")[[1]]
+}
+nodes <- c()
+for(i in 1:8){
+  nodes[i] <- which(grid == (i-1))
+}
+
+BFS <- function(start, end){
+costs = array(Inf, dim = c(37,179)) 
+costs[start] <- 0
+unvisited <- array(1, dim =c(37,179)) 
+current <- 1 
+repeat{
+  current <- which(costs == min(costs[which(unvisited==1)]) & unvisited==1)[1]
+  right <- ifelse(current %in% 6587:6623, 0, ifelse(grid[current + 37] == "#", 0, current + 37))
+  down <- ifelse(current %% 37 == 0, 0, ifelse(grid[current + 1] == "#", 0, current + 1))
+  up <- ifelse(current %in% seq(from  = 1, by = 37, to = 6587),0, ifelse(grid[current - 1] == "#", 0, current - 1))
+  left <- ifelse(current %in% 1:37, 0, ifelse(grid[current - 37] == "#", 0, current - 37))
+  neighbors <- c(down,up, right, left)
+  for(i in 1:length(which(neighbors != 0))){
+    j <- neighbors[which(neighbors != 0)[i]]
+    costs[j] <- min(costs[j] , costs[current] + 1)
+  }
+  unvisited[current] <- 0  
+  if(costs[end] != Inf) break  
+}
+return(costs[end])
+}
+
+connections = expand.grid(nodes, nodes) #all connections 
+pathlengths <- c()
+for(i in 1:nrow(connections)){
+  pathlengths[i] <- BFS(as.double(connections[i,])[1], as.double(connections[i,])[2]) 
+  print(i)
+}
+library(combinat)
+possible <- permn(nodes[-1]) #5241 
+possible[[1]]
+for(i in 1:fact(7)){
+  possible[[i]] <- c(5241, possible[[i]])
+}
+loc <- function(x,y){
+  output <- c()
+  for(i in 1:64){
+    if(as.double(connections[i,])[1] == x & as.double(connections[i,])[2] == y)
+      output <- i
+  }
+return(pathlengths[output]) 
+}
+
+len <- function(n){
+  pathlength <- c()
+  for(i in 1:7){
+    pathlength[i] <- loc(possible[[n]][i], possible[[n]][i+1])
+  }
+  return(sum(pathlength))
+}
+values <- c()
+for(i in 1:fact(7)){
+values[i] <- len(i)
+print(i)
+}
+min(values) #ANSWER ----- > 460 
+
+#PART 2:
+
+valuesp2  <- c()
+for(i in 1:fact(7)){
+  valuesp2[i] <- values[i] + loc(possible[[i]][8], 5241)
+  print(i)
+}
+
+min(valuesp2) #ANSWER ---- > 668
