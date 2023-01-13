@@ -1,0 +1,80 @@
+# --- Day 20: Firewall Rules ---
+setwd("C:/Users/15517/Downloads")
+library(tidyverse)
+input <- readLines("2016_d20.txt")
+pairs <- list()
+for(i in seq_along(input)){
+  pairs[[i]] <- c(as.double(str_extract_all(input[i], "\\d+")[[1]][1]),as.double(str_extract_all(input[i], "\\d+")[[1]][2]))
+  
+}
+lower <- c()
+for(i in seq_along(input)){
+ lower[i] <- pairs[[i]][1]
+}
+upper <- c()
+for(i in seq_along(input)){
+  upper[i] <- pairs[[i]][2]
+}
+indices <- c()
+for(i in seq_along(input)){
+  indices[i] <- which(lower == sort(lower)[i])
+}
+one = sort(lower)
+two = upper[indices]
+pairs <- tibble(one = one, two = two)
+
+
+merger <- function(n){
+  lower = pairs$one[n]
+  upper = pairs$two[n]
+  if(lower < currentmax & upper > currentmax ){
+    return(upper)
+  } else if(lower < currentmax & upper <= currentmax){
+    return(currentmax)
+  } else if(lower > (currentmax + 1)){
+    return(0)
+  }
+  else if(lower > currentmax ){
+    return(upper)
+  }
+  }
+  
+}
+currentmax <- pairs$two[1]
+n <- 2
+repeat{
+  if(merger(n) == 0) break 
+  currentmax <- merger(n)
+  n <- n + 1
+  print(n)
+}
+14975794 + 1 #ANSWER --- found a gap at n  = 16 
+
+#PART 2:
+
+blacklist <- function(n){
+  lower = pairs$one[n]
+  upper = pairs$two[n]
+  if(lower <= (currentmax + 1) && upper > currentmax){
+    return(list(0, upper))
+  }
+  else if(lower <= (currentmax + 1) && upper <= currentmax){
+    return(list(0, currentmax))
+  }
+  else if(lower > (currentmax + 1)){
+    return(list((lower - currentmax - 1), upper))
+  }
+}
+currentmax <- pairs$two[1]
+n <- 2
+blacklistcount <- 0
+repeat{
+  
+  blacklistcount <- blacklistcount + blacklist(n)[[1]]
+  currentmax <- blacklist(n)[[2]]
+  n <- n + 1
+  if(n == nrow(pairs) + 1) break 
+}
+
+
+blacklistcount # 101 
