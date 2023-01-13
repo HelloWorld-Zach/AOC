@@ -1,0 +1,60 @@
+# --- Day 20: Particle Swarm ---
+
+input <- readLines("2017_d20.txt")
+p1 = map_dbl(seq_along(input), ~  as.integer(str_extract_all(input[.], "-{0,1}\\d+")[[1]][1]))
+p2 = map_dbl(seq_along(input), ~  as.integer(str_extract_all(input[.], "-{0,1}\\d+")[[1]][2]))
+p3 = map_dbl(seq_along(input), ~  as.integer(str_extract_all(input[.], "-{0,1}\\d+")[[1]][3]))
+v1 = map_dbl(seq_along(input), ~  as.integer(str_extract_all(input[.], "-{0,1}\\d+")[[1]][4]))
+v2 = map_dbl(seq_along(input), ~  as.integer(str_extract_all(input[.], "-{0,1}\\d+")[[1]][5]))
+v3 = map_dbl(seq_along(input), ~  as.integer(str_extract_all(input[.], "-{0,1}\\d+")[[1]][6]))
+a1 = map_dbl(seq_along(input), ~  as.integer(str_extract_all(input[.], "-{0,1}\\d+")[[1]][7]))
+a2 = map_dbl(seq_along(input), ~  as.integer(str_extract_all(input[.], "-{0,1}\\d+")[[1]][8]))
+a3 = map_dbl(seq_along(input), ~  as.integer(str_extract_all(input[.], "-{0,1}\\d+")[[1]][9]))
+
+time <- 0
+repeat{
+  #increment velocities 
+  v1 <- v1 + a1
+  v2 <- v2 + a2
+  v3 <- v3 + a3
+  #shift positions
+  p1 <- p1 + v1
+  p2 <- p2 + v2
+  p3 <- p3 + v3
+  time <- time + 1
+  print(time)
+  
+}
+
+manhattan <- function(n) abs(p1[n]) + abs(p2[n]) + abs(p3[n])
+
+which.min(map_dbl(seq_along(input), ~ manhattan(.))) - 1 #substract 1 for 0 indexing -_- 
+
+
+#PART 2:
+
+collisions <- function(){
+  collide <- c()
+  for(i in remaining)
+    for(j in remaining)
+      if(p1[i] == p1[j] & p2[i] == p2[j] & p3[i] == p3[j] & i != j)
+        collide <- c(collide, i, j)
+  
+ return(setdiff(remaining, collide)) 
+}
+remaining <- 1:1000
+time <- 0
+repeat{
+  remaining <- collisions()
+  #increment velocities 
+   v1[remaining] <- v1[remaining] + a1[remaining]
+   v2[remaining] <- v2[remaining] + a2[remaining]
+   v3[remaining] <- v3[remaining] + a3[remaining]
+  #shift positions
+   p1[remaining] <- p1[remaining] + v1[remaining]
+   p2[remaining] <- p2[remaining] + v2[remaining]
+   p3[remaining] <- p3[remaining] + v3[remaining]
+  time <- time + 1
+  print(length(remaining)) #471
+  
+}
