@@ -1,0 +1,90 @@
+# --- Day 15: Chiton ---
+input <- readLines("2021_d15.txt")
+risk <- array(0, dim = c(100,100))
+for(i in 1:100){
+  risk[i,] <- as.integer(str_split(input[i], "")[[1]])
+}
+
+
+costs = array(Inf, dim = c(100,100)) #we initialize with all infinite costs 
+costs[1,1] <- 0
+unvisited <- array(1, dim =c(100,100)) #all of our nodes begin as unvisited 
+end <- 100^2 #once we populate the end node (minimum cost to reach that node we break our loop)
+current <- 1 #first node is 1
+repeat{
+  current <- which(costs == min(costs[which(unvisited==1)]) & unvisited==1)[1]
+  right <- ifelse(current %% 100 == 0, 0, current + 1)
+  left  <- ifelse(current %in% seq(from =1, to = 9901, by =100), 0, current - 1)
+  up <- ifelse(current %in% (1:100), 0, current - 100)
+  down <- ifelse(current %in% (9901:10000), 0, current + 100)  
+  connected_nodes <- c(down,right, up, left)
+  for(i in 1:length(which(connected_nodes != 0))){
+    j <- connected_nodes[i]
+    costs[j] <- min(costs[j] , costs[current] + risk[j])
+  }
+  unvisited[current] <- 0  #we have completed our work for that node 
+  if(current == end) break  #finished when we populate the end node 
+}
+costs[100,100] #429 
+
+
+#part 2: same thing but part 1 is 4% of part 2's size 
+
+incrementer <- function(input){
+ output <- array(0, dim = c(nrow(input), ncol(input))) 
+  for(i in 1:nrow(input))
+    for(j in 1:ncol(input))
+        output[i,j] <- ifelse(input[i,j] == 9 , 1, input[i,j] + 1)
+  return(output)
+}
+
+recursiveincrement <- function(iterations){
+  if(iterations == 0){
+    return(risk)} 
+   else {
+  input <- risk 
+  for(i in seq_len(iterations)){
+    input <- incrementer(input)
+  }
+  return(input)
+    }
+}
+
+iterations <- as.vector(col(array(0, dim = c(5,5))) + row(array(0, dim = c(5,5))) - 2) #iterations of "recursiveincrement" function matrix of values 1:5, 6:10, ... etc 
+
+cache <- vector("list", length = 25L)
+
+for(i in 1:25){
+  cache[[i]] <- recursiveincrement(iterations[i])
+}
+row1 = cbind(cache[[1]],cache[[2]],cache[[3]],cache[[4]],cache[[5]])
+row2 = cbind(cache[[6]],cache[[7]],cache[[8]],cache[[9]],cache[[10]])
+row3 = cbind(cache[[11]],cache[[12]],cache[[13]],cache[[14]],cache[[15]])
+row4 = cbind(cache[[16]],cache[[17]],cache[[18]],cache[[19]],cache[[20]])
+row5 = cbind(cache[[21]],cache[[22]],cache[[23]],cache[[24]],cache[[25]])
+riskp2 <- rbind(row1, row2, row3, row4,row5)
+
+#identical(riskp2[1:100,1:100], risk) 
+
+
+costs = array(Inf, dim = c(500,500)) #we initialize with all infinite costs 
+costs[1,1] <- 0
+unvisited <- array(1, dim =c(500,500)) #all of our nodes begin as unvisited 
+end <- 500^2 #once we populate the end node (minimum cost to reach that node we break our loop)
+current <- 1 #first node is 1
+repeat{
+  current <- which(costs == min(costs[which(unvisited==1)]) & unvisited==1)[1]
+  right <- ifelse(current %% 500 == 0, 0, current + 1)
+  left  <- ifelse(current %in% seq(from =1, to = 249501, by =500), 0, current - 1)
+  up <- ifelse(current %in% (1:500), 0, current - 500)
+  down <- ifelse(current %in% (249501:250000), 0, current + 500)  
+  connected_nodes <- c(down,right, up, left)
+  for(i in 1:length(which(connected_nodes != 0))){
+    j <- connected_nodes[i]
+    costs[j] <- min(costs[j] , costs[current] + riskp2[j])
+  }
+  unvisited[current] <- 0  #we have completed our work for that node 
+  # print(length(which(unvisited == 1)))
+  if(current == end) break  #finished when we populate the end node 
+}
+costs[500,500] #little on the slow side -----2,844
