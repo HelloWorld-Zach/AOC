@@ -1,0 +1,20 @@
+# --- Day 4: The Ideal Stocking Stuffer ---
+
+library(digest)
+input <- "ckczppom"
+i <- 1
+
+repeat{
+if(substr(digest::digest(paste0(input, i) , algo = "md5", serialize = FALSE), 1, 5) == "00000") break 
+i <- i + 1
+print(i)
+}
+i #117,146 
+#PART 2:
+
+repeat{
+  if(substr(digest::digest(paste0(input, i) , algo = "md5", serialize = FALSE), 1, 6) == "000000") break 
+  i <- i + 1
+  print(i)
+}
+i #3,938,038
