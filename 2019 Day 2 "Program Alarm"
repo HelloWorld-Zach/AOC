@@ -1,3 +1,5 @@
+# --- Day 2: 1202 Program Alarm ---
+
 library(tidyverse)
 setwd("C:/Users/15517/Downloads")
 Day2 <- as.double(str_split(readLines("2019_d2.txt"), ",")[[1]])
