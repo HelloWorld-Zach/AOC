@@ -1,4 +1,4 @@
-#day 8:
+#--- Day 8: Handheld Halting ---
 library(tidyverse)
 setwd("C:/Users/15517/Downloads")
 Day8 <- tibble(readLines("2020_d8.txt")) %>% rename(combined = `readLines("2020_d8.txt")`) %>% separate(col = combined, into=c("instructions", "operation"), sep = " ") %>% mutate(operation = as.double(operation))
