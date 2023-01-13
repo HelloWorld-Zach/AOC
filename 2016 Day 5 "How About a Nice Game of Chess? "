@@ -1,0 +1,35 @@
+# --- Day 5: How About a Nice Game of Chess? ---
+
+library(digest)
+input <- "cxdnnyjw"
+i <- 1
+password <- c()
+repeat{
+  if(substr(digest::digest(paste0(input, i) , algo = "md5", serialize = FALSE), 1, 5) == "00000") 
+    password <- c(password, substr(digest::digest(paste0(input, i) , algo = "md5", serialize = FALSE), 6, 6))
+  if(length(password) == 8) break 
+  i <- i + 1
+}
+
+cat(str_flatten(password)) #ANSWER ----- > f77a0e6e
+
+#PART 2:
+
+input <- "cxdnnyjw"
+i <- 1
+components <- c()
+positions <- c()
+repeat{
+  if(substr(digest::digest(paste0(input, i) , algo = "md5", serialize = FALSE), 1, 5) == "00000" & substr(digest::digest(paste0(input, i) , algo = "md5", serialize = FALSE), 6, 6) %in% 0:7){
+    positions <- c(positions , substr(digest::digest(paste0(input, i) , algo = "md5", serialize = FALSE), 6, 6))
+    components <- c(components, substr(digest::digest(paste0(input, i) , algo = "md5", serialize = FALSE), 7,7))
+  }
+   if(n_distinct(positions) == 8) break 
+  i <- i + 1
+}
+actual <- c()
+for(i in 1:8){
+  actual[i] <- min(which(as.integer(positions) == (i-1)))
+}
+
+cat(str_flatten(components[actual])) # ANSWER ----- > 999828ec
