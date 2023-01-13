@@ -1,0 +1,56 @@
+# --- Day 3: Perfectly Spherical Houses in a Vacuum ---
+
+input <- readLines("2015_d3.txt")
+grid <- array(0, dim = c(500,500))
+position <- c(250,250)
+grid[250,250] <- 1
+for(i in seq_len(nchar(input))){
+  switch(substr(input, i, i), 
+         "^" = {position[2] <- position[2] - 1
+         grid[position[1], position[2]] <- grid[position[1], position[2]] + 1},
+         "v" = {position[2] <- position[2] + 1
+         grid[position[1], position[2]] <- grid[position[1], position[2]] + 1},
+         ">" = {position[1] <- position[1] + 1
+         grid[position[1], position[2]] <- grid[position[1], position[2]] + 1},
+         "<" = {position[1] <- position[1] - 1
+          grid[position[1], position[2]] <- grid[position[1], position[2]] + 1})
+
+}
+
+
+length(which(grid >= 1)) #ANSWER ------ > 2081
+
+#PART 2:
+
+#SANTA
+grid <- array(0, dim = c(500,500))
+position <- c(250,250)
+grid[250,250] <- 1
+for(i in seq(from = 1, by = 2, to = (nchar(input)-1))){
+  switch(substr(input, i, i), 
+         "^" = {position[2] <- position[2] - 1
+         grid[position[1], position[2]] <- grid[position[1], position[2]] + 1},
+         "v" = {position[2] <- position[2] + 1
+         grid[position[1], position[2]] <- grid[position[1], position[2]] + 1},
+         ">" = {position[1] <- position[1] + 1
+         grid[position[1], position[2]] <- grid[position[1], position[2]] + 1},
+         "<" = {position[1] <- position[1] - 1
+         grid[position[1], position[2]] <- grid[position[1], position[2]] + 1})
+  
+}
+#ROBO-SANTA
+position <- c(250,250)
+for(i in seq(from = 2, by = 2, to = nchar(input))){
+  switch(substr(input, i, i), 
+         "^" = {position[2] <- position[2] - 1
+         grid[position[1], position[2]] <- grid[position[1], position[2]] + 1},
+         "v" = {position[2] <- position[2] + 1
+         grid[position[1], position[2]] <- grid[position[1], position[2]] + 1},
+         ">" = {position[1] <- position[1] + 1
+         grid[position[1], position[2]] <- grid[position[1], position[2]] + 1},
+         "<" = {position[1] <- position[1] - 1
+         grid[position[1], position[2]] <- grid[position[1], position[2]] + 1})
+  
+}
+
+length(which(grid >= 1)) #ANSWER ------ > 
