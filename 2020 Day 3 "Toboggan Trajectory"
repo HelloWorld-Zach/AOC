@@ -1,4 +1,4 @@
-#day 3:
+#--- Day 3: Toboggan Trajectory ---
 library(tidyverse)
 forest <- tibble(readLines("forest.txt"))%>% rename(trees = `readLines("forest.txt")`)
 forest$trees <- str_dup(forest$trees,times=35)
