@@ -1,0 +1,56 @@
+# --- Day 7: The Sum of Its Parts --- 
+
+input <- readLines("2018_d7.txt")
+finished <- map_chr(seq_along(input), ~ str_extract_all(input, "[:upper:]")[[.]][2])
+before <- map_chr(seq_along(input), ~ str_extract_all(input, "[:upper:]")[[.]][3])
+
+available <- function(x){
+  positions <- finished[which(before == x)]
+  if(all(positions %in% answer)){
+    return(x)
+  }
+  else{
+    invisible(0)
+  }
+}
+answer <- sort(setdiff(unique(finished), unique(before)))[1]
+repeat {
+  
+  possibilities <- sort(setdiff(map_chr(LETTERS[1:26], ~available(.))[map_chr(LETTERS[1:26], ~available(.)) != "0.000000"], answer))
+  answer <- c(answer, possibilities[1])
+  if(length(answer) == 26) break 
+  
+  
+}
+
+cat(str_flatten(answer)) #BFLNGIRUSJXEHKQPVTYOCZDWMA
+
+#PART 2:
+time <- 0 
+answer <- c()
+working <- c()
+possibilities <- sort(setdiff(map_chr(LETTERS[1:26], ~available(.))[map_chr(LETTERS[1:26], ~available(.)) != "0.000000"], answer))
+finishtimes <-  c(match(possibilities, LETTERS[1:26])) + 60
+worked_on <- possibilities <- sort(setdiff(map_chr(LETTERS[1:26], ~available(.))[map_chr(LETTERS[1:26], ~available(.)) != "0.000000"], answer))
+repeat{
+  
+  
+  aval <- sort(possibilities[which(finishtimes <= time)])
+  if(length(aval) != 0){
+    answer <- c(answer, aval)
+    possibilities <- sort(setdiff(map_chr(LETTERS[1:26], ~available(.))[map_chr(LETTERS[1:26], ~available(.)) != "0.000000"], answer))
+    worked_on <- worked_on[which(finishtimes > time)]
+    finishtimes <- finishtimes[which(finishtimes > time)] 
+    finishtimes <- c(finishtimes, time + 60 + (match(setdiff(possibilities, worked_on), LETTERS[1:26])))
+    worked_on <- c(worked_on, sort(setdiff(possibilities, worked_on)))
+    worked_on <- worked_on[1:min(5, length(worked_on))]
+    finishtimes <- finishtimes[1:min(5, length(finishtimes))]
+  
+  }
+ if(length(answer) == 26) break 
+  time <- time + 1
+  print(time)
+  
+}
+
+time #ANSWER 
