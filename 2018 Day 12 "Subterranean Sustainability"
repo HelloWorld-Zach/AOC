@@ -1,0 +1,55 @@
+# --- Day 12: Subterranean Sustainability ---
+
+input <- readLines("2018_d12.txt")
+generation <- array(".", dim = c(25, 250))
+generation[1, 115:213] <- str_split(str_trim(str_split(input[1], ":")[[1]][2]), "")[[1]]
+plantstates <- input[3:34]
+categories <- map_chr(1:32, ~str_trim(str_split(plantstates[.], "=>")[[1]][2]))
+states <- map_chr(1:32, ~str_trim(str_split(plantstates[.], "=>")[[1]][1]))
+
+decision <- function(y,x){
+  neighbors <- str_flatten(generation[y-1, (x-2):(x+2)])
+  output <- c()
+  for(i in 1:32){
+   output[i] <- identical(states[i], neighbors) 
+  }
+   # print(neighbors)
+  
+  if(sum(output) == 1){
+    return(categories[which(output == 1)])
+  }
+  else{
+    return(0)
+  }
+}
+
+
+row <- 2
+repeat{
+  for(i in 3:248){
+    generation[row, i] <- decision(row, i)
+  }
+  row <- row + 1
+  if(row == 22) break 
+  print(row)
+}
+
+sum(which(generation[21, ] == "#") - 115) #ANSWER ----> 2,767 
+
+generation <- array(".", dim = c(1000, 2500))
+generation[1, 1250:1348] <- str_split(str_trim(str_split(input[1], ":")[[1]][2]), "")[[1]]
+cache <- c()
+row <- 2
+repeat{
+  for(i in 3:2498){
+    generation[row, i] <- decision(row, i)
+  }
+  cache <- c(cache, sum(which(generation[row, ] == "#") - 1250))
+  row <- row + 1
+  if(row == 1001) break 
+  print(row)
+}
+
+diff(cache) #starting at 196 its always 53 greater than previous 
+options(scipen = 999)
+(50000000000 - 195)*53 + cache[195]         #    2,650,000,001,362 
