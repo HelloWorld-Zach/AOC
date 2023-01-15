@@ -1,0 +1,30 @@
+# --- Day 25: Combo Breaker ---
+card_key <- 11562782
+door_key <- 18108497
+find_loopsize <- function(key){
+initial <- 1
+loopsize <- 0
+ repeat{
+     initial <- initial*7
+     initial <- initial %% 20201227
+     loopsize <- loopsize + 1
+     if(initial == key) break 
+ }
+return(loopsize)
+}
+
+card_loop <- find_loopsize(card_key)
+door_loop <- find_loopsize(door_key)
+
+initial <- 1
+round <- 0
+repeat{
+  initial <- initial*card_key
+  initial <- initial %% 20201227
+  round <- round + 1
+  if(round == door_loop) break 
+}
+
+
+initial # 2,947,148
+
