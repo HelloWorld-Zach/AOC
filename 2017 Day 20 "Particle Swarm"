@@ -28,7 +28,7 @@ repeat{
 
 manhattan <- function(n) abs(p1[n]) + abs(p2[n]) + abs(p3[n])
 
-which.min(map_dbl(seq_along(input), ~ manhattan(.))) - 1 #substract 1 for 0 indexing -_- 
+which.min(map_dbl(seq_along(input), ~ manhattan(.))) - 1 #subtract 1 for 0 indexing -_- 
 
 
 #PART 2:
